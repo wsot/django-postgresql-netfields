@@ -1,6 +1,5 @@
 from django.apps import AppConfig
 
-#from django.db.models.lookups import default_lookups
 from netfields.fields import CidrAddressField, InetAddressField
 from netfields.lookups import NetContained, NetContains, NetContainedOrEqual, NetContainsOrEquals, InvalidLookup, Family
 from netfields.lookups import EndsWith, IEndsWith, StartsWith, IStartsWith, Regex, IRegex
@@ -9,13 +8,22 @@ from netfields.lookups import EndsWith, IEndsWith, StartsWith, IStartsWith, Rege
 class NetfieldsConfig(AppConfig):
     name = 'netfields'
 
-#    for lookup in default_lookups.keys():
-#        if lookup not in ['contains', 'startswith', 'endswith', 'icontains', 'istartswith', 'iendswith', 'isnull', 'in',
-#                          'exact', 'iexact', 'regex', 'iregex', 'lt', 'lte', 'gt', 'gte', 'equals', 'iequals', 'range']:
-#            invalid_lookup = InvalidLookup
-#            invalid_lookup.lookup_name = lookup
-#            CidrAddressField.register_lookup(invalid_lookup)
-#            InetAddressField.register_lookup(invalid_lookup)
+    try:
+        # Django Pre-1.9 stored a list of lookups in default_lookups
+        from django.db.models.lookups import default_lookups
+        lookups = default_lookups.keys()
+    except ImportError:
+        # In Django 1.9, these were moved to a series of register function calls on the Field class
+        from django.db.models import Field
+        lookups = Field.class_lookups.keys()
+
+    for lookup in lookups:
+        if lookup not in ['contains', 'startswith', 'endswith', 'icontains', 'istartswith', 'iendswith', 'isnull', 'in',
+                         'exact', 'iexact', 'regex', 'iregex', 'lt', 'lte', 'gt', 'gte', 'equals', 'iequals', 'range']:
+            invalid_lookup = InvalidLookup
+            invalid_lookup.lookup_name = lookup
+            CidrAddressField.register_lookup(invalid_lookup)
+            InetAddressField.register_lookup(invalid_lookup)
 
     CidrAddressField.register_lookup(EndsWith)
     CidrAddressField.register_lookup(IEndsWith)
@@ -40,3 +48,4 @@ class NetfieldsConfig(AppConfig):
     InetAddressField.register_lookup(NetContainedOrEqual)
     InetAddressField.register_lookup(NetContainsOrEquals)
     InetAddressField.register_lookup(Family)
+
