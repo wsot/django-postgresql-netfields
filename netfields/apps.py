@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
-from django.db.models.lookups import default_lookups
+#from django.db.models.lookups import default_lookups
 from netfields.fields import CidrAddressField, InetAddressField
 from netfields.lookups import NetContained, NetContains, NetContainedOrEqual, NetContainsOrEquals, InvalidLookup, Family
 from netfields.lookups import EndsWith, IEndsWith, StartsWith, IStartsWith, Regex, IRegex
@@ -9,13 +9,13 @@ from netfields.lookups import EndsWith, IEndsWith, StartsWith, IStartsWith, Rege
 class NetfieldsConfig(AppConfig):
     name = 'netfields'
 
-    for lookup in default_lookups.keys():
-        if lookup not in ['contains', 'startswith', 'endswith', 'icontains', 'istartswith', 'iendswith', 'isnull', 'in',
-                          'exact', 'iexact', 'regex', 'iregex', 'lt', 'lte', 'gt', 'gte', 'equals', 'iequals', 'range']:
-            invalid_lookup = InvalidLookup
-            invalid_lookup.lookup_name = lookup
-            CidrAddressField.register_lookup(invalid_lookup)
-            InetAddressField.register_lookup(invalid_lookup)
+#    for lookup in default_lookups.keys():
+#        if lookup not in ['contains', 'startswith', 'endswith', 'icontains', 'istartswith', 'iendswith', 'isnull', 'in',
+#                          'exact', 'iexact', 'regex', 'iregex', 'lt', 'lte', 'gt', 'gte', 'equals', 'iequals', 'range']:
+#            invalid_lookup = InvalidLookup
+#            invalid_lookup.lookup_name = lookup
+#            CidrAddressField.register_lookup(invalid_lookup)
+#            InetAddressField.register_lookup(invalid_lookup)
 
     CidrAddressField.register_lookup(EndsWith)
     CidrAddressField.register_lookup(IEndsWith)
