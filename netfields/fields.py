@@ -18,6 +18,9 @@ class _NetAddressField(models.Field):
         kwargs['max_length'] = self.max_length
         super(_NetAddressField, self).__init__(*args, **kwargs)
 
+    def from_db_value(self, value, expression, connection, context):
+        return self.to_python(value)
+
     def to_python(self, value):
         if not value:
             return value
@@ -71,7 +74,7 @@ class _NetAddressField(models.Field):
         return name, path, args, kwargs
 
 
-class InetAddressField(with_metaclass(models.SubfieldBase, _NetAddressField)):
+class InetAddressField(_NetAddressField):
     description = "PostgreSQL INET field"
     max_length = 39
 
@@ -81,6 +84,9 @@ class InetAddressField(with_metaclass(models.SubfieldBase, _NetAddressField)):
 
     def db_type(self, connection):
         return 'inet'
+
+    def from_db_value(self, value, expression, connection, context):
+        return self.to_python(value)
 
     def to_python(self, value):
         if not value:
@@ -98,7 +104,7 @@ class InetAddressField(with_metaclass(models.SubfieldBase, _NetAddressField)):
         return InetAddressFormField
 
 
-class CidrAddressField(with_metaclass(models.SubfieldBase, _NetAddressField)):
+class CidrAddressField(_NetAddressField):
     description = "PostgreSQL CIDR field"
     max_length = 43
 
@@ -117,6 +123,9 @@ class MACAddressField(models.Field):
 
     def db_type(self, connection):
         return 'macaddr'
+
+    def from_db_value(self, value, expression, connection, context):
+        return self.to_python(value)
 
     def to_python(self, value):
         if not value:
@@ -137,3 +146,4 @@ class MACAddressField(models.Field):
         defaults = {'form_class': MACAddressFormField}
         defaults.update(kwargs)
         return super(MACAddressField, self).formfield(**defaults)
+
