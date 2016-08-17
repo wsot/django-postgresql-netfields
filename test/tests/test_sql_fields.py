@@ -5,6 +5,7 @@ from ipaddress import ip_interface, ip_network
 from netaddr import EUI
 
 from django.db import IntegrityError
+from django.db.models.sql import EmptyResultSet
 from django.core.exceptions import FieldError
 from django.test import TestCase
 
@@ -74,6 +75,10 @@ class BaseSqlTestCase(object):
             self.qs.filter(field__in=[self.value1]),
             self.select + 'WHERE "table"."field" IN (%s)'
         )
+
+    def test_in_empty_lookup(self):
+        with self.assertRaises(EmptyResultSet):
+            self.qs.filter(field__in=[]).query.get_compiler(self.qs.db).as_sql()
 
     def test_gt_lookup(self):
         self.assertSqlEquals(
