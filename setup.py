@@ -21,8 +21,8 @@ if sys.version_info.major == 2:
     requirements.append('ipaddress')
 
 setup(
-    name='django-netfields',
-    version='0.5.3',
+    name='django-postgres-netfields',
+    version='0.5.3.0.1',
     license='BSD',
     description='Django PostgreSQL netfields implementation',
     long_description=get_long_description(),
